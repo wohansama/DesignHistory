@@ -30,6 +30,7 @@ import { InfoPanel } from '../info-panel/InfoPanel.js';
 import { PANEL_CONTENT } from '../info-panel/panel-content.js';
 import { createPostProcessing } from './PostProcessing.js';
 import { UIFeedbackAudio } from '../audio/UIFeedbackAudio.js';
+import { AmbientAudio } from '../audio/AmbientAudio.js';
 
 export class Application {
   constructor(container) {
@@ -57,6 +58,7 @@ export class Application {
     this._lightPoints = null;
     this._infoNodes = null;
     this._audio = null;
+    this._ambientAudio = null;
 
     this.loop = createRenderLoop({
       scene: this.scene,
@@ -159,6 +161,7 @@ export class Application {
     this._player.onLock(() => {
       if (overlay) overlay.classList.add('hidden');
       this._audio?.start();
+      this._ambientAudio?.start();
       console.log('[M3] Pointer locked — player control active.');
     });
     this._player.onUnlock(() => {
@@ -221,6 +224,7 @@ export class Application {
     if (!CONFIG.infoNodes.enabled) return;
 
     this._audio = new UIFeedbackAudio();
+    this._ambientAudio = new AmbientAudio();
 
     this._infoNodes = new InfoNodeSystem(this.scene, this.camera, this.renderer.domElement);
     this._infoNodes.createNodes();
@@ -301,6 +305,13 @@ export class Application {
     if (this._lightPoints && this._roseWindow && this._modelMeshes) {
       const factor = this._lightPoints.getDissipationFactor();
       const modelOpacity = 1.0 - factor;
+
+      // Drive ambient audio modulation from player distance.
+      if (this._ambientAudio) {
+        const state = this._lightPoints.getState();
+        this._ambientAudio.update(factor, state);
+      }
+
       if (modelOpacity > 0.005) {
         this._roseWindow.visible = true;
         for (const mesh of this._modelMeshes) {
@@ -322,6 +333,7 @@ export class Application {
   dispose() {
     this.stop();
     this._audio?.dispose();
+    this._ambientAudio?.dispose();
     this._infoNodes?.dispose();
     this._lightPoints?.dispose();
     this._player?.dispose();

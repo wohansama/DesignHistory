@@ -59,12 +59,12 @@ export const CONFIG = {
     ambient: {
       enabled: true,
       color: 0xffffff,
-      intensity: 0.65,       // Moderately bright — only the physical model is affected.
+      intensity: 1.0,        // Brighter ambient fill (was 0.65)
     },                        // particles (ShaderMaterial) and nodes (MeshBasicMaterial) are self-lit.
     directional: {
       enabled: true,
       color: 0xffffff,
-      intensity: 1.5,        // Bright key light — properly reveals model details.
+      intensity: 2.2,        // Brighter key light (was 1.5)
       position: { x: 5, y: 8, z: 6 },
       castShadow: false,
     },
@@ -72,12 +72,12 @@ export const CONFIG = {
       enabled: true,
       skyColor: 0xe8eef5,
       groundColor: 0x202028,
-      intensity: 0.5,
+      intensity: 0.8,        // Brighter sky/ground gradient (was 0.5)
     },
     hdr: {
       enabled: true,
       path: './assets/hdr/NightSkyHDRI.exr',
-      environmentIntensity: 0.85,
+      environmentIntensity: 1.2,  // Brighter environment reflections (was 0.85)
       background: true,
     },
   },
@@ -266,6 +266,40 @@ export const CONFIG = {
     hoverDebounce: 150,        // Minimum ms between hover pings
     panelFreqLow: 440,         // Panel open/close chime — lower tone (Hz)
     panelFreqHigh: 554,        // Panel open/close chime — higher tone (Hz)
+  },
+
+  // ------------------------------------------------------------------
+  // Ambient Audio — procedural spatial atmosphere.
+  // Four barely-perceptible layers create a living space.
+  // Player does NOT actively notice it, but removing it kills the room.
+  // No melody, no rhythm, no discernible patterns.
+  // ------------------------------------------------------------------
+  ambientAudio: {
+    enabled: false,
+    masterVolume: 0.14,          // Barely perceptible — but perceptible
+    drone: {
+      freq1: 32, freq2: 33,      // Dual sines → 1Hz natural beating
+      volume: 0.38,              // Relative to master
+      lfoRate: 0.05,             // Hz — 20-second breath cycle
+      lowpassFreq: 80,           // Hz — comfort guard
+    },
+    airFlow: {
+      volume: 0.28,
+      lowpassFreq: 200,          // Hz — only deep non-directional rumble
+      lfoRate: 0.03,             // Hz — ~33-second drift
+    },
+    particles: {
+      volume: 0.16,              // Quietest layer — "air sparkle"
+      highpassFreq: 6000,        // Hz — only top-end dust
+      highpassMax: 8000,         // Hz — far-distance thinner air
+      lfoRate: 0.07,             // Hz — ~14-second shimmer
+    },
+    reverb: {
+      duration: 4.0,             // Seconds — impulse response length
+      decay: 2.5,                // Exponential decay exponent
+      wetLevel: 0.12,            // Very low wet mix — just spatial glue
+    },
+    transitionTime: 3.0,         // Seconds — all distance-driven parameter ramps
   },
 
   // ------------------------------------------------------------------
