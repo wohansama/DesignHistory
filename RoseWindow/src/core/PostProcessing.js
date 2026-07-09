@@ -79,8 +79,13 @@ export function createPostProcessing({ renderer, scene, camera }) {
 
   // --- Material swap state ---
   const _materials = new Map();
+  let _savedBackground = null;
 
   function darkenNonBloomed() {
+    // Null the background so the bloom pass doesn't double-render it (the base
+    // render already has the full night sky; additive composite would overexpose it).
+    _savedBackground = scene.background;
+    scene.background = null;
     scene.traverse((obj) => {
       if (obj.isMesh && !obj.userData.bloom) {
         _materials.set(obj.uuid, obj.material);
@@ -90,6 +95,7 @@ export function createPostProcessing({ renderer, scene, camera }) {
   }
 
   function restoreMaterial() {
+    scene.background = _savedBackground;
     scene.traverse((obj) => {
       if (obj.isMesh && _materials.has(obj.uuid)) {
         obj.material = _materials.get(obj.uuid);

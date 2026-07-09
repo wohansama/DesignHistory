@@ -111,15 +111,35 @@ html, body {
   font-weight: 400;
   letter-spacing: 0.08em;
   color: #f2f4f8;
-  margin-bottom: 0.8rem;
+  margin-bottom: 0.6rem;
 }
 
+/* Guide text — short impactful sentence, larger and emphasized */
+.panel-guide {
+  font-size: 1.02rem;
+  font-weight: 500;
+  line-height: 1.6;
+  color: rgba(242, 244, 248, 0.95);
+  margin-bottom: 1rem;
+  padding-left: 0.7rem;
+  border-left: 2px solid rgba(255, 255, 255, 0.25);
+}
+
+/* Body text — longer paragraph, smaller and regular */
 .panel-description {
-  font-size: 0.9rem;
+  font-size: 0.84rem;
   line-height: 1.85;
-  color: rgba(242, 244, 248, 0.82);
-  white-space: pre-line; /* respect \n in description text */
+  color: rgba(242, 244, 248, 0.72);
+  white-space: pre-line;
   margin-bottom: 1.2rem;
+}
+
+/* Unified footer — very small, at the bottom of every panel */
+.panel-footer {
+  font-size: 0.68rem;
+  line-height: 1.5;
+  color: rgba(242, 244, 248, 0.38);
+  margin-bottom: 0.8rem;
 }
 
 .panel-hint {

@@ -116,8 +116,9 @@ export class Application {
   // Scene assembly — floor + rose window + lighting + HDR env.
   // ------------------------------------------------------------------
   _buildScene() {
-    // Floor.
+    // Floor — hidden (night sky scene has no ground; player floats in space).
     this._floor = createFloor();
+    this._floor.visible = false;
     this.scene.add(this._floor);
 
     // Rose window (may be null if the GLB failed to load).
@@ -130,10 +131,14 @@ export class Application {
     this._lighting = createLighting();
     this.scene.add(this._lighting);
 
-    // HDR environment → drives PBR reflections on floor + rose window.
+    // HDR environment → PBR reflections + visible night sky background.
     if (CONFIG.lighting.hdr.enabled) {
       const envMap = this.resources.getHDREnvironment();
       applyHDREnvironment(this.scene, envMap);
+      if (CONFIG.lighting.hdr.background) {
+        // Use the original high-res equirectangular texture (PMREM is blurry for background).
+        this.scene.background = this.resources.getHDREquirectangular();
+      }
     }
   }
 

@@ -29,14 +29,14 @@ export const CONFIG = {
     far: 100,
     // M3: y is now driven by player eyeHeight. XZ kept as the spawn point.
     initialPosition: { x: 0, y: 1.7, z: 10 },  // 10m from artwork, natural eye height
-    lookAt: { x: 0, y: 3.0, z: 0 },            // Face the rose window center (raised 1m)
+    lookAt: { x: 0, y: 1.7, z: 0 },            // Face the rose window center (at eye height)
   },
 
   // ------------------------------------------------------------------
   // Scene (Tech Spec §2.2)
   // ------------------------------------------------------------------
   scene: {
-    roseWindowCenter: { x: 0, y: 3.0, z: 0 },  // Raised 1m (was 2.0)
+    roseWindowCenter: { x: 0, y: 1.7, z: 0 },  // At player eye height — window floats in night sky
     fog: null,                                // No fog in current version (minimal scene)
   },
 
@@ -77,11 +77,10 @@ export const CONFIG = {
       intensity: 0.15,
     },
     hdr: {
-      // Optional HDR environment (Tech Spec §2.2 / Task 2.2 "HDR Environment (optional)")
       enabled: true,
-      path: './assets/hdr/environment.hdr',
-      environmentIntensity: 0.4,   // Reduced so particles dominate the visual
-      background: false,           // Do not render HDR as visible background (keep dark hall)
+      path: './assets/hdr/NightSkyHDRI.exr',  // Night sky EXR (EXRLoader handles .exr)
+      environmentIntensity: 0.4,
+      background: true,           // Show the night sky as the visible background
     },
   },
 
@@ -183,15 +182,15 @@ export const CONFIG = {
     fadeInStagger: 0.15,        // Delay between consecutive nodes
     fadeOutDuration: 0.3,
     raycastRadius: 0.25,        // Generous hit radius — easier to aim with the crosshair
-    // 5 nodes surrounding the rose window edge (center 0,3,0; window radius ~3m).
-    // All at z=+0.8 (in front of the window, toward the player) so all are visible.
-    // None block the window center. Topics per Design Doc §2.3.
+    // 5 nodes surrounding the rose window edge (center 0,1.7,0; window radius ~3m).
+    // All at z=+0.8 (in front of the window, toward the player). y values shifted
+    // down 1.3 to match the new window center; bottom node clamped to 0.3.
     positions: [
-      { id: 'color',         pos: { x: 3.8,  y: 3.0, z: 0.8 }, title: '色彩', color: 0xff6b6b },
-      { id: 'light',         pos: { x: 2.4,  y: 5.0, z: 0.8 }, title: '光',   color: 0xd38290 },
-      { id: 'architecture',  pos: { x: -2.4, y: 5.0, z: 0.8 }, title: '建筑', color: 0xa698b5 },
-      { id: 'craftsmanship', pos: { x: -3.8, y: 3.0, z: 0.8 }, title: '工艺', color: 0x79aeda },
-      { id: 'history',       pos: { x: 0,    y: 1.2, z: 0.8 }, title: '历史', color: 0x4dc4ff },
+      { id: 'color',         pos: { x: 3.8,  y: 1.7, z: 0.8 }, title: '色彩构成', color: 0xff6b6b },
+      { id: 'light',         pos: { x: 2.4,  y: 3.7, z: 0.8 }, title: '光影表达', color: 0xd38290 },
+      { id: 'architecture',  pos: { x: -2.4, y: 3.7, z: 0.8 }, title: '几何结构', color: 0xa698b5 },
+      { id: 'craftsmanship', pos: { x: -3.8, y: 1.7, z: 0.8 }, title: '数字重构', color: 0x79aeda },
+      { id: 'history',       pos: { x: 0,    y: 0.3, z: 0.8 }, title: '历史演变', color: 0x4dc4ff },
     ],
   },
 

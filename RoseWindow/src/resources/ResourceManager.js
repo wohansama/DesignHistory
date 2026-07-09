@@ -2,7 +2,7 @@
 //
 // Responsibilities:
 //   1. Load GLB models via GLTFLoader.
-//   2. Load HDR environment maps via RGBELoader + PMREMGenerator.
+//   2. Load HDR environment maps via RGBELoader (.hdr) or EXRLoader (.exr) + PMREMGenerator.
 //   3. Expose a single `loadAll()` Promise the Application awaits before starting.
 //   4. Report progress through an optional onProgress callback (0..1).
 //
@@ -14,6 +14,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
+import { EXRLoader } from 'three/addons/loaders/EXRLoader.js';
 
 export class ResourceManager {
   constructor(renderer) {
@@ -22,12 +23,14 @@ export class ResourceManager {
     // Lazily-initialized loaders
     this._gltfLoader = null;
     this._rgbeLoader = null;
+    this._exrLoader = null;
     this._pmremGenerator = null;
 
     // Loaded assets are stored here for the rest of the app to read.
     this.assets = {
       models: new Map(),   // name -> { scene, animations, ... }
       hdrEnvironment: null, // THREE.Texture (PMREM-processed) or null
+      hdrEquirectangular: null, // Original high-res equirectangular texture (for scene.background)
     };
   }
 
@@ -48,6 +51,13 @@ export class ResourceManager {
       this._rgbeLoader = new RGBELoader();
     }
     return this._rgbeLoader;
+  }
+
+  _getEXRLoader() {
+    if (!this._exrLoader) {
+      this._exrLoader = new EXRLoader();
+    }
+    return this._exrLoader;
   }
 
   _getPMREMGenerator() {
@@ -93,17 +103,23 @@ export class ResourceManager {
    * If the file fails to load, resolves null so the app can continue without HDR.
    */
   loadHDR(path) {
-    const rgbe = this._getRGBELoader();
+    // Select the appropriate loader based on file extension.
+    // Both RGBELoader (.hdr) and EXRLoader (.exr) produce DataTexture
+    // that PMREMGenerator can process identically.
+    const isEXR = path.toLowerCase().endsWith('.exr');
+    const loader = isEXR ? this._getEXRLoader() : this._getRGBELoader();
     const pmrem = this._getPMREMGenerator();
     return new Promise((resolve) => {
-      rgbe.load(
+      loader.load(
         path,
         (texture) => {
+          // Set equirectangular mapping so the texture can be used as scene.background.
+          texture.mapping = THREE.EquirectangularReflectionMapping;
           // Convert equirectangular HDR into a cubemap-style pre-filtered env map.
           const envMap = pmrem.fromEquirectangular(texture).texture;
-          // The original equirect texture is no longer needed once PMREM is built.
-          texture.dispose();
+          // Keep the original high-res texture for scene.background (PMREM is low-res/blurry).
           this.assets.hdrEnvironment = envMap;
+          this.assets.hdrEquirectangular = texture;
           console.log(`[ResourceManager] HDR environment loaded from ${path}`);
           resolve(envMap);
         },
@@ -164,6 +180,10 @@ export class ResourceManager {
     return this.assets.hdrEnvironment;
   }
 
+  getHDREquirectangular() {
+    return this.assets.hdrEquirectangular;
+  }
+
   // ------------------------------------------------------------------
   // Cleanup
   // ------------------------------------------------------------------
@@ -181,10 +201,14 @@ export class ResourceManager {
     }
     this.assets.models.clear();
 
-    // Dispose HDR env map.
+    // Dispose HDR env map + original equirectangular texture.
     if (this.assets.hdrEnvironment) {
       this.assets.hdrEnvironment.dispose();
       this.assets.hdrEnvironment = null;
+    }
+    if (this.assets.hdrEquirectangular) {
+      this.assets.hdrEquirectangular.dispose();
+      this.assets.hdrEquirectangular = null;
     }
 
     // Dispose PMREM generator (it holds GPU resources).
