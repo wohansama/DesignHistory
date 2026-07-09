@@ -112,7 +112,7 @@ export const CONFIG = {
     ],
 
     point: {
-      size: 0.055,             // Larger points for a softer, glowy look (was 0.03)
+      size: 0.11,              // 2× size for bolder luminous presence (was 0.055)
       sizeVariation: 0.4,      // Per-point random ±40% size
       opacity: 0.35,           // Low opacity — 100K additive big points accumulate to bright
                                // clusters naturally; high opacity overexposes to white.
@@ -161,6 +161,17 @@ export const CONFIG = {
       radius: 0.5,        // Bloom spread
       threshold: 0.25,    // Raised — only genuine bright additive clusters bloom, not the whole scene
     },
+  },
+
+  // ------------------------------------------------------------------
+  // Shader — Advanced visual parameters for PointShader (IMPROVEMENT_PLAN §1)
+  // ------------------------------------------------------------------
+  shader: {
+    noiseIdleWeight: 0.5,      // Noise vs sin blend ratio for idle breathing
+    coreSharpness: 40.0,       // Core Gaussian sharpness (narrow bright core)
+    haloSharpness: 6.0,        // Halo Gaussian sharpness (wide soft glow)
+    saturation: 1.25,          // Color saturation boost multiplier (>1 = more vibrant)
+    displacementNoise: 0.15,   // Displacement noise amplitude (±15% variation)
   },
 
   // ------------------------------------------------------------------
