@@ -188,6 +188,13 @@ export class Application {
       return;
     }
 
+    // Push the physical model 0.5m behind the particles (which are already baked
+    // into the BufferGeometry at the model's original position). During the
+    // cross-dissolve, particles float in front of the physical window — spatial depth.
+    if (this._roseWindow) {
+      this._roseWindow.position.z -= 0.5;
+    }
+
     // The points ARE the artwork now (Tech Spec §4.2). Hide the physical model,
     // but prepare its materials for the M8 dissipation cross-fade (far away → model appears).
     this._modelMeshes = [];

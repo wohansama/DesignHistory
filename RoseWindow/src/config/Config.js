@@ -59,12 +59,12 @@ export const CONFIG = {
     ambient: {
       enabled: true,
       color: 0xffffff,
-      intensity: 0.5,        // Restored — only the physical model (MeshStandardMaterial) is affected;
+      intensity: 0.65,       // Moderately bright — only the physical model is affected.
     },                        // particles (ShaderMaterial) and nodes (MeshBasicMaterial) are self-lit.
     directional: {
       enabled: true,
       color: 0xffffff,
-      intensity: 1.2,        // Restored — properly lights the model when it appears via dissipation.
+      intensity: 1.5,        // Bright key light — properly reveals model details.
       position: { x: 5, y: 8, z: 6 },
       castShadow: false,
     },
@@ -72,12 +72,12 @@ export const CONFIG = {
       enabled: true,
       skyColor: 0xe8eef5,
       groundColor: 0x202028,
-      intensity: 0.4,        // Restored.
+      intensity: 0.5,
     },
     hdr: {
       enabled: true,
       path: './assets/hdr/NightSkyHDRI.exr',
-      environmentIntensity: 0.7,  // Restored — brighter PBR reflections on the model.
+      environmentIntensity: 0.85,
       background: true,
     },
   },
@@ -107,8 +107,8 @@ export const CONFIG = {
     enabled: true,
     // Per-mesh absolute counts (independent — increase glass without touching frame).
     meshSampling: [
-      { name: 'RoseWindow_Glass', count: 170000 },
-      { name: 'RoseWindow_Frame', count: 30000 },
+      { name: 'RoseWindow_Glass', count: 210000 },
+      { name: 'RoseWindow_Frame', count: 40000 },
     ],
 
     point: {
@@ -146,7 +146,7 @@ export const CONFIG = {
     dissipation: {
       enabled: true,
       startDistance: 16.0,     // Particles start fading here (earlier, more gradual transition)
-      endDistance: 30.0,       // boundary — particles fully gone, model fully visible
+      endDistance: 25.0,       // Particles fully gone, model fully visible at 25m
     },
   },
 
@@ -184,11 +184,11 @@ export const CONFIG = {
     // All at z=+0.8 (in front of the window, toward the player). y values shifted
     // down 1.3 to match the new window center; bottom node clamped to 0.3.
     positions: [
-      { id: 'color',         pos: { x: 3.8,  y: 1.7, z: 0.8 }, title: '色彩构成', color: 0xff6b6b },
-      { id: 'light',         pos: { x: 2.4,  y: 3.7, z: 0.8 }, title: '光影表达', color: 0xd38290 },
-      { id: 'architecture',  pos: { x: -2.4, y: 3.7, z: 0.8 }, title: '几何结构', color: 0xa698b5 },
-      { id: 'craftsmanship', pos: { x: -3.8, y: 1.7, z: 0.8 }, title: '数字重构', color: 0x79aeda },
-      { id: 'history',       pos: { x: 0,    y: 0.3, z: 0.8 }, title: '历史演变', color: 0x4dc4ff },
+      { id: 'color',         pos: { x: 3.8,  y: 1.7, z: 1.2 }, title: '色彩构成', color: 0xff6b6b },
+      { id: 'light',         pos: { x: 2.4,  y: 3.7, z: 0.4 }, title: '光影表达', color: 0xd38290 },
+      { id: 'architecture',  pos: { x: -2.4, y: 3.7, z: 1.0 }, title: '几何结构', color: 0xa698b5 },
+      { id: 'craftsmanship', pos: { x: -3.8, y: 1.7, z: 0.3 }, title: '数字重构', color: 0x79aeda },
+      { id: 'history',       pos: { x: 0,    y: 0.3, z: 1.3 }, title: '历史演变', color: 0x4dc4ff },
     ],
   },
 
