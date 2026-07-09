@@ -1,0 +1,4 @@
+1.维护一个状态文件（State File）：用Markdown记下当前“做到哪了、什么成了、什么挂了”，方便下次执行任务时直接查看进度。
+2.宏观信息：
+   场景中的物体在当前版本只需要包含玫瑰花窗和一个白色的地板即可
+   Do not implement features from future milestones in advance unless explicitly requested. Complete only the current milestone according to the development task list.

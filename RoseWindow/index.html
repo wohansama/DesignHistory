@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rose Window Digital Exhibition</title>
+  <link rel="stylesheet" href="./styles/main.css" />
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "./node_modules/three/build/three.module.js",
+      "three/addons/": "./node_modules/three/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body>
+  <div id="app"></div>
+
+  <!-- M5: crosshair — shown when pointer is locked, highlights when hovering a node -->
+  <div id="crosshair"></div>
+
+  <!-- M6: information panel — glassmorphism overlay, opens when a node is selected -->
+  <div id="info-panel">
+    <div class="panel-banner"></div>
+    <div class="panel-body">
+      <h2 class="panel-title"></h2>
+      <p class="panel-description"></p>
+      <div class="panel-hint">点击空白处关闭 · Walk away to close</div>
+    </div>
+  </div>
+
+  <!-- M3: pointer-lock entry overlay. Clicking it requests pointer lock so the
+       player can look around with the mouse. Pressing ESC releases the lock and
+       this overlay reappears. -->
+  <div id="start-overlay">
+    <div class="overlay-card">
+      <h1>玫瑰窗数字展览</h1>
+      <p class="overlay-sub">Rose Window Digital Exhibition</p>
+      <div class="overlay-hint">点击进入 · Click to Enter</div>
+      <div class="overlay-controls">
+        <span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> 移动</span>
+        <span><kbd>鼠标</kbd> 视角</span>
+        <span><kbd>Shift</kbd> 加速</span>
+        <span><kbd>ESC</kbd> 退出</span>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
