@@ -252,6 +252,23 @@ export const CONFIG = {
   },
 
   // ------------------------------------------------------------------
+  // UI Audio Feedback — procedurally synthesized interface sounds.
+  // All sounds are intentionally very quiet (masterVolume 0.08) so they
+  // never compete with ambient atmosphere or the artwork itself.
+  // ------------------------------------------------------------------
+  uiAudio: {
+    enabled: true,
+    masterVolume: 0.08,        // Global UI audio level — whisper-quiet
+    clickFreq: 6000,           // Glass-touch sine ring frequency (Hz)
+    clickDuration: 0.2,        // Ring decay time (seconds)
+    hoverFreq: 3000,           // Hover ping frequency (Hz)
+    hoverDuration: 0.05,       // Hover ping duration (seconds)
+    hoverDebounce: 150,        // Minimum ms between hover pings
+    panelFreqLow: 440,         // Panel open/close chime — lower tone (Hz)
+    panelFreqHigh: 554,        // Panel open/close chime — higher tone (Hz)
+  },
+
+  // ------------------------------------------------------------------
   // Render Loop (Tech Spec §11)
   // ------------------------------------------------------------------
   renderLoop: {

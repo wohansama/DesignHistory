@@ -29,6 +29,7 @@ import { InfoNodeSystem } from '../info-nodes/InfoNodeSystem.js';
 import { InfoPanel } from '../info-panel/InfoPanel.js';
 import { PANEL_CONTENT } from '../info-panel/panel-content.js';
 import { createPostProcessing } from './PostProcessing.js';
+import { UIFeedbackAudio } from '../audio/UIFeedbackAudio.js';
 
 export class Application {
   constructor(container) {
@@ -55,6 +56,7 @@ export class Application {
     this._player = null;
     this._lightPoints = null;
     this._infoNodes = null;
+    this._audio = null;
 
     this.loop = createRenderLoop({
       scene: this.scene,
@@ -156,6 +158,7 @@ export class Application {
 
     this._player.onLock(() => {
       if (overlay) overlay.classList.add('hidden');
+      this._audio?.start();
       console.log('[M3] Pointer locked — player control active.');
     });
     this._player.onUnlock(() => {
@@ -217,6 +220,8 @@ export class Application {
   _initInfoNodes() {
     if (!CONFIG.infoNodes.enabled) return;
 
+    this._audio = new UIFeedbackAudio();
+
     this._infoNodes = new InfoNodeSystem(this.scene, this.camera, this.renderer.domElement);
     this._infoNodes.createNodes();
 
@@ -233,19 +238,23 @@ export class Application {
     this._player.onUnlock(() => {
       if (crosshair) crosshair.classList.remove('visible', 'hover');
       // ESC (pointer unlock) closes the panel.
+      if (this._infoPanel?.isOpen()) this._audio?.playPanelClose();
       this._infoPanel?.close();
     });
 
     // Hover feedback → crosshair changes color
     this._infoNodes.onHoverChange = (isHovering) => {
       if (crosshair) crosshair.classList.toggle('hover', isHovering);
+      if (isHovering) this._audio?.playHover();
     };
 
     // M6: Selection → open the info panel with the topic's content.
     this._infoNodes.onSelect = (data) => {
       const content = PANEL_CONTENT[data.id];
       if (content) {
+        this._audio?.playClick();
         this._infoPanel.open(content, data.id);
+        this._audio?.playPanelOpen();
       }
     };
 
@@ -260,6 +269,7 @@ export class Application {
           this._infoNodes.onClick();
         } else if (this._infoPanel?.isOpen()) {
           // Not hovering a node + panel open → close panel
+          this._audio?.playPanelClose();
           this._infoPanel.close();
         }
       } else {
@@ -283,6 +293,7 @@ export class Application {
       this._infoNodes.update(dt, state);
       // M6: auto-close the panel when the player leaves exploration range.
       if (this._infoPanel?.isOpen() && state !== 'exploration') {
+        this._audio?.playPanelClose();
         this._infoPanel.close();
       }
     }
@@ -310,6 +321,7 @@ export class Application {
 
   dispose() {
     this.stop();
+    this._audio?.dispose();
     this._infoNodes?.dispose();
     this._lightPoints?.dispose();
     this._player?.dispose();
