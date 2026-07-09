@@ -59,28 +59,26 @@ export const CONFIG = {
     ambient: {
       enabled: true,
       color: 0xffffff,
-      intensity: 0.22,       // Slightly dimmed so additive light particles read as the brightest thing
-    },
+      intensity: 0.5,        // Restored — only the physical model (MeshStandardMaterial) is affected;
+    },                        // particles (ShaderMaterial) and nodes (MeshBasicMaterial) are self-lit.
     directional: {
       enabled: true,
       color: 0xffffff,
-      intensity: 0.6,        // Slightly dimmed key light
-      // Position relative to rose window center — shines from upper-front
+      intensity: 1.2,        // Restored — properly lights the model when it appears via dissipation.
       position: { x: 5, y: 8, z: 6 },
-      castShadow: false,     // Keep M2 lightweight; shadows are an M7 concern
+      castShadow: false,
     },
     hemisphere: {
-      // Subtle sky/ground gradient for natural ambient feel
       enabled: true,
       skyColor: 0xe8eef5,
       groundColor: 0x202028,
-      intensity: 0.15,
+      intensity: 0.4,        // Restored.
     },
     hdr: {
       enabled: true,
-      path: './assets/hdr/NightSkyHDRI.exr',  // Night sky EXR (EXRLoader handles .exr)
-      environmentIntensity: 0.4,
-      background: true,           // Show the night sky as the visible background
+      path: './assets/hdr/NightSkyHDRI.exr',
+      environmentIntensity: 0.7,  // Restored — brighter PBR reflections on the model.
+      background: true,
     },
   },
 
@@ -147,7 +145,7 @@ export const CONFIG = {
     // model fades in (cross-dissolve). "Distance = matter, proximity = light."
     dissipation: {
       enabled: true,
-      startDistance: 20.0,     // Particles start fading here (overlaps with interaction zone edge)
+      startDistance: 16.0,     // Particles start fading here (earlier, more gradual transition)
       endDistance: 30.0,       // boundary — particles fully gone, model fully visible
     },
   },
@@ -200,7 +198,7 @@ export const CONFIG = {
   player: {
     eyeHeight: 1.7,              // Natural first-person eye height (meters)
     // Spawn point on the XZ plane — player should immediately see the rose window.
-    spawn: { x: 0, z: 10 },      // 10m from artwork (Tech Spec §3.3)
+    spawn: { x: 0, z: 25 },      // 25m — starts at the edge, sees the physical model first
 
     // Movement (Tech Spec §3.2: WASD + Mouse Look; Shift Sprint optional)
     moveSpeed: 2.6,              // Calm gallery walk (m/s)
